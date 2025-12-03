@@ -1,0 +1,10 @@
+def get_joltage(line, start = 0, step = 12):
+    first_max = [0,0]
+    for i, char in enumerate(line[start:-step]):
+        num = int(char)
+        if first_max is None or num > first_max[1]:
+            first_max = [i,num]
+    step -= 1
+    if step == 0:
+        return first_max[1]
+    return int(str(first_max[1]) + str(get_joltage(line,start=first_max[0],step=step)))
