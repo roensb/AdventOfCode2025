@@ -25,8 +25,6 @@ def sum_matrix(filename):
     adjacent_sums = calculate_adjacent_sum(matrix)
     boolean_matrix = adjacent_sums < 4
     correction = boolean_matrix & matrix
-    print(correction)
-    print(matrix)
     result = correction.sum()
     return result
 
