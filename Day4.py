@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import convolve2d
+import time
 
 def calculate_adjacent_sum(binary_matrix):
     kernel = np.array([[1, 1, 1],
@@ -42,4 +43,6 @@ def sum_matrix_p2(filename):
     return total_removed
 
 if __name__ == "__main__":
+    start = time.time()
     print(sum_matrix_p2("tests/day4.txt"))
+    print(start - time.time())
