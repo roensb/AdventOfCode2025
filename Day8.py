@@ -5,18 +5,27 @@ class circuit(object):
         self.junctions = [starting_junction]
 
     def __str__(self):
-        return f"{self.junctions}"
+        string = ""
+        for junction in self.junctions:
+            string += str(junction) + " --- "
+        return f"{string}"
 
     def add_junction(self, junction):
-        if junction not in self.junctions:
-            for existing in self.junctions:
-                if junction.nearest_neighbour_coord == existing.coord_name:
-                    self.junctions.append(junction)
-                    break
-                return False
-        return True
+        if not self.check_junction(junction) and not self.check_junction(junction.nearest_neighbour_object):
+            return False
+        elif self.check_junction(junction.nearest_neighbour_object):
+            self.junctions.append(junction)
+            return True
+        else:
+            return False
+
     def get_num_junctions(self):
         return len(self.junctions)
+
+    def check_junction(self, junction):
+        if junction not in self.junctions:
+            return False
+        return True
 
 
 class junction(object):
@@ -30,7 +39,7 @@ class junction(object):
         self.nearest_neighbour_coord = None
 
     def __str__(self):
-        return f"{self.coord_name}"
+        return f"{self.coord_name}, {self.shortest_distance}"
 
     def calc_distance(self, other_junction):
         distance = math.sqrt((self.x - other_junction.x)**2 +
@@ -52,31 +61,50 @@ def read_file(filename):
                 junctions.append(new_junction)
             else:
                 junctions = calc_nearest_neighbour(new_junction, junctions)
-    junctions.sort(key=lambda junction: junction.shortest_distance)
+    junctions.sort(key=lambda i: i.shortest_distance)
+
+    for x in junctions:
+        print(x, x.nearest_neighbour_coord)
     circuits = []
+    max_connections = 10
+    connections = 0
     for node in junctions:
-        print(node)
         if not circuits:
             circuits.append(circuit(node))
         else:
-            for group in circuits:
-                if group.add_junction(node):
+            added = False
+            for i, x in enumerate(circuits):
+                if x.add_junction(node):
+                    added = True
+                    connections +=1
                     break
                 else:
-                    circuits.append(circuit(node))
+                    added = False
+            if not added:
+               circuits.append(circuit(node))
+        if connections == max_connections:
+            break
 
     return circuits
 
 def calc_nearest_neighbour(new_junction, junctions):
-    for junction in junctions:
-        new_junction.calc_distance(junction)
-        junction.calc_distance(new_junction)
+    distances = []
+    for x in junctions:
+        val1 = new_junction.calc_distance(x)
+        val2 =x.calc_distance(new_junction)
+        distances.append(val1)
     junctions.append(new_junction)
+    distances.sort()
+    print(distances)
     return junctions
 
 if __name__ == "__main__":
     circuits = read_file("tests/day8.txt")
-    print(len(circuits))
+    circuits.sort(key=lambda i: len(i.junctions))
+    print(len(circuits[-1].junctions)*len(circuits[-2].junctions)*len(circuits[-3].junctions))
+
+    for x in circuits:
+        print(x)
     '''
     for circuit in circuits:
         for junction in circuit.junctions:
