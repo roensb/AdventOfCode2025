@@ -35,7 +35,6 @@ def beam_me_p2(matrix):
     total_splits = 0
     max_matrix = len(matrix)
     for i, row in enumerate(matrix):
-
         if i+1 == max_matrix:
             break
         new_row = row + matrix[i+1].copy()
@@ -61,8 +60,6 @@ def beam_me_p2(matrix):
             paths_matrix[-1][location] = 0
         matrix[i+1] = new_row
     return np.sum(paths_matrix[-1])
-
-
 
 if __name__ == "__main__":
     print(beam_me_p2(read_file("tests/day7.txt")))
